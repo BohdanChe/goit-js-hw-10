@@ -56,6 +56,15 @@
     
 }
 
+.normal{
+    background-color: #4E75FF;
+    color: #ffffff;
+}
+
+.button:hover{
+    background-color: #6C8CFF;
+    color: #ffffff;
+}
 .input{
     font-family: var(--font-family);
     font-size: 16px;
