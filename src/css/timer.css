@@ -56,7 +56,7 @@
     
 }
 
-.normal{
+.is-activ{
     background-color: #4E75FF;
     color: #ffffff;
 }
@@ -80,3 +80,8 @@
     padding-bottom: 8px;
     background-color: #ffffff;
 }
+
+.input:hover{
+    border: 1px solid #000;
+}
+
