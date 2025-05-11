@@ -1,13 +1,23 @@
-// Описаний в документації
-import flatpickr from "flatpickr";
-// Додатковий імпорт стилів
-import "flatpickr/dist/flatpickr.min.css";
+import flatpickr from 'flatpickr';
+import 'flatpickr/dist/flatpickr.min.css';
 
-// Описаний у документації
-import iziToast from "izitoast";
-// Додатковий імпорт стилів
-import "izitoast/dist/css/iziToast.min.css";
+import iziToast from 'izitoast';
+import 'izitoast/dist/css/iziToast.min.css';
 
+const startBtn = document.querySelector('[data-start]');
+const input = document.getElementById('datetime-picker');
+
+const daysEl = document.querySelector('[data-days]');
+const hoursEl = document.querySelector('[data-hours]');
+const minutesEl = document.querySelector('[data-minutes]');
+const secondsEl = document.querySelector('[data-seconds]');
+
+let userSelectedDate = null;
+let countdownInterval = null;
+
+input.addEventListener('input', () => {
+  input.style.border = '1px solid black';
+});
 
 
 
@@ -17,9 +27,86 @@ const options = {
   defaultDate: new Date(),
   minuteIncrement: 1,
   onClose(selectedDates) {
-    console.log(selectedDates[0]);
+  const selected = selectedDates[0];
+  if (selected <= new Date()) {
+    iziToast.error({
+      title: 'Error',
+      message: 'Please choose a date in the future',
+      position: 'topRight',
+    });
+    startBtn.disabled = true;
+  } else {
+    userSelectedDate = selected;
+    startBtn.disabled = false;
+  }
+},
+
+  };
+
+flatpickr(input, options);
+
+flatpickr(input, {
+  enableTime: true,
+  time_24hr: true,
+  defaultDate: new Date(),
+  minuteIncrement: 1,
+  onClose(selectedDates) {
+    const selected = selectedDates[0];
+    if (selected <= new Date()) {
+      iziToast.error({
+        title: 'Error',
+        message: 'Please choose a date in the future',
+        position: 'topRight',
+      });
+      startBtn.disabled = true;
+      startBtn.classList.remove('is-activ');
+    } else {
+      userSelectedDate = selected;
+      startBtn.disabled = false;
+      startBtn.classList.add('is-activ'); // додати світіння
+    }
   },
-};
+});
+
+// Обробка кліку
+startBtn.addEventListener('click', () => {
+  if (!userSelectedDate) return;
+
+  startBtn.disabled = true;
+  input.disabled = true;
+  startBtn.classList.remove('is-activ'); // прибрати світіння
+
+  countdownInterval = setInterval(() => {
+    const now = new Date();
+    const diff = userSelectedDate - now;
+
+    if (diff <= 0) {
+      clearInterval(countdownInterval);
+      updateTimerDisplay(0);
+      input.disabled = false;
+      return;
+    }
+
+    updateTimerDisplay(diff);
+  }, 1000);
+});
+
+function updateTimerDisplay(ms) {
+  const { days, hours, minutes, seconds } = convertMs(ms);
+
+  daysEl.textContent = addLeadingZero(days);
+  hoursEl.textContent = addLeadingZero(hours);
+  minutesEl.textContent = addLeadingZero(minutes);
+  secondsEl.textContent = addLeadingZero(seconds);
+}
+
+function addLeadingZero(value) {
+  return String(value).padStart(2, '0');
+}
+
+
+
+
 
 function convertMs(ms) {
   // Number of milliseconds per unit of time
@@ -40,16 +127,16 @@ function convertMs(ms) {
   return { days, hours, minutes, seconds };
 }
 
-const startBtn = document.querySelector('.button');
-let intervalId;
+// const startBtn = document.querySelector('.button');
+// let intervalId;
 
-startBtn.addEventListener('click', () => { 
-  setInterval(() => {
-    console.log('hellow')
-  }, 10000)
+// startBtn.addEventListener('click', () => { 
+//   setInterval(() => {
+//     console.log('hellow')
+//   }, 1000)
   
-  startBtn.classList.toggle('is-activ');
-})
+//   startBtn.classList.toggle('is-activ');
+// })
 console.log(convertMs(2000)); // {days: 0, hours: 0, minutes: 0, seconds: 2}
 console.log(convertMs(140000)); // {days: 0, hours: 0, minutes: 2, seconds: 20}
 console.log(convertMs(24140000)); // {days: 0, hours: 6 minutes: 42, seconds: 20}
