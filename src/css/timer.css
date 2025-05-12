@@ -8,7 +8,7 @@
 
 .form{
     display: flex;
-    margin-bottom: 32px;
+    
 }
 
 .timer {
@@ -52,6 +52,7 @@
     color: #989898;
     border: none;
     margin-left: 8px;
+    margin-bottom: 32px;
     
     
 }
